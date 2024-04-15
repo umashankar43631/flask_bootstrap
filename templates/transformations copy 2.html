@@ -1,0 +1,154 @@
+s<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha512-tDXPcamuZsWWd6OsKFyH6nAqh/MjZ/5Yk88T5o+aMfygqNFPan1pLyPFAndRzmOWHKT+jSDzWpJv8krj6x1LMA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+    <title>Visualization</title>
+    <style>
+        .custom-col-xl-2-5 {
+            width: 20%;
+            padding: 0 5px; /* Adjust padding as needed */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-auto col-md-4 custom-col-xl-2-5 px-sm-3 px-0 bg-danger">
+
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline"></span><br><br>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link align-middle px-0 text-white">
+                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('experimentConfig') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Experiment Config</span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('getTransformations') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Transformations</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('scheduleExperiment') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Scheduling Experiment</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('resultsAndDashboard') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Results and Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                </div>
+            </div>
+    
+
+                <div class="col py-3">
+                <!-- <div class="container"> -->
+                    <!-- <form action="#">
+                        <div class="form-group"> -->
+                            <label for="plotselected">Select Graph:</label>
+                            <select name="graph" id="plotselected" multiple required>
+                                <option value="PDF" selected>PDF</option>
+                                <option value="BoxPlot">BoxPlot</option>
+                                <option value="CDF">CDF</option>
+                                <option value="LineChart">LineChart</option>
+                                <option value="Scatter">Scatter</option>
+                                <option value="Histogram">Histogram</option>
+                            </select>
+                        <!-- </div>
+                    </form> -->
+                <!-- </div> -->
+                
+                
+                <div class="plot" id="plot-container">
+                    <div class="PDF-container">
+                        {{ pdf_fig|safe }}
+                    </div>
+                    <div class="CDF-container" style="display:none;">
+                        {{ cdf_fig|safe }}
+                    </div>
+                    <div class="BoxPlot-container" style="display:none;">
+                        {{ box_fig|safe }}
+                    </div>
+                    <div class="LineChart-container" style="display:none;">
+                        {{ line_fig|safe }}
+                    </div>
+                    <div class="Scatter-container" style="display:none;">
+                        {{ scatter_fig|safe }}
+                    </div>
+                    <div class="Histogram-container" style="display:none;">
+                        {{ hist_fig|safe }}
+                    </div>
+                </div>
+                
+                <form action="{{ url_for('submitVisuals') }}" method="post">
+                    <div style="text-align: center;">
+                        <input id="submitButton" class="btn btn-primary" type="submit" value="Save and Next">
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
+
+
+<script>
+
+    document.getElementById('plotselected').addEventListener('change', function () {
+
+        var plotSelect = document.getElementById('plotselected');
+        var selectedPlots = [];
+
+        // Loop through all the options and collect the selected ones
+        for (var i = 0; i < plotSelect.options.length; i++) {
+            var option = plotSelect.options[i];
+            if (option.selected) {
+                selectedPlots.push(option.value);
+            }
+        }
+
+        console.log(selectedPlots)
+        // Show the selected container divs
+        selectedPlots.forEach(function(plot) {
+            var plotContainer = document.querySelector('.' + plot + '-container');
+            if (plotContainer) {
+                plotContainer.style.display = 'block';
+            }
+        });
+        var Plots = ["PDF","CDF", "BoxPlot","Histogram","LineChart","Scatter"]
+
+        // Loop through all plots and set display style accordingly
+        Plots.forEach(function(plot) {
+            var plotContainer = document.querySelector('.' + plot + '-container');
+            if (plotContainer) {
+                if (selectedPlots.includes(plot)) {
+                    plotContainer.style.display = 'block';
+                } else {
+                    plotContainer.style.display = 'none';
+                }
+            }
+        });
+
+    });
+</script>    
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha512-TqmAh0/sSbwSuVBODEagAoiUIeGRo8u95a41zykGfq5iPkO9oie8IKCgx7yAr1bfiBjZeuapjLgMdp9UMpCVYQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+</body>
+

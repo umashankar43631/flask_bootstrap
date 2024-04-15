@@ -1,0 +1,26 @@
+<div class="plot" id="plot-container">
+    <div class="row">
+        <div class="col-md-6 PDF-container">
+            {{ pdf_fig|safe }}
+        </div>
+        <div class="col-md-6 CDF-container" style="display:none;">
+            {{ cdf_fig|safe }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 BoxPlot-container" style="display:none;">
+            {{ box_fig|safe }}
+        </div>
+        <div class="col-md-6 Histogram-container" style="display:none;">
+            {{ hist_fig|safe }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 LineChart-container" style="display:none;">
+            {{ line_fig|safe }}
+        </div>
+        <div class="col-md-6 Scatter-container" style="display:none;">
+            {{ scatter_fig|safe }}
+        </div>
+    </div>
+</div>

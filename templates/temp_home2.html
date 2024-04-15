@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Home</title>
+    <style>
+        .custom-col-xl-2-5 {
+            width: 20%;
+            padding: 0 5px; /* Adjust padding as needed */
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-auto col-md-4 custom-col-xl-2-5 px-sm-3 px-0 bg-danger">
+
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline"></span><br><br>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link align-middle px-0 text-white">
+                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('experimentConfig') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Experiment Config</span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Transformations</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('scheduleExperiment') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Scheduling Experiment</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('resultsAndDashboard') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Results and Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                </div>
+            </div>
+    
+            <div class="col py-3">
+                <h2 class="text-center">Commodity Price Forecasting Engine</h2>
+
+                <div class="container-fluid">
+                    <div class="row justify-content-center align-items-center min-vh-100">
+                        <div class="col-md-6">
+                            <div class="border p-4">
+                                <form id="experimentForm1" method="POST" action="{{ url_for('form') }}">
+                                    <label for="commodity">Commodity:</label>
+                                    <select name="commodity" id="commodity" class="form-select mb-3" required>
+                                        <option value="Aluminium" selected>Aluminium</option>
+                                        <option value="Gold">Gold</option>
+                                        <option value="Copper">Copper</option>
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Crude Oil">Crude Oil</option>
+                                        <option value="Milk">Milk</option>
+                                        <option value="Zinc">Zinc</option>
+                                    </select>
+
+                                    <label for="experiment">Experiment:</label>
+                                    <select name="experiment" id="experiment" class="form-select mb-3" required>
+                                        <option value="New Experiment" selected>New Experiment</option>
+                                        <option value="Existing Experiment">Existing Experiment</option>
+                                    </select>
+                                    <div id="new_experiment" style="display:block;">
+                                        <label for="new_experiment_name">New Experiment Name:</label>
+                                        <input type="text" name="new_experiment_name" id="new_experiment_name" class="form-control mb-3">
+                                    </div>
+                                    <div id="existing_experiment" style="display:none;">
+                                        <label for="existing_experiment_name">Existing Experiment:</label>
+                                        <select name="existing_experiment_name" id="existing_experiment_name">
+                                            <!-- Options will be dynamically populated -->
+                                        </select>
+                                    </div>
+
+                                    <div id="experiment_details" style="display:none;">
+                                        <label for="experiment_details">Experiment Details:</label>
+                                        <select name="experiment_details" id="experiment_details"></select>
+                                    </div>
+                                    <br>
+                                    <div style="text-align: center;">
+                                        <input id="submitButton" class="btn btn-primary" type="submit" value="Save and Next" disabled>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to check if all required inputs are filled
+        function checkInputs() {
+            const inputs = document.querySelectorAll('#experimentForm1 input[required]');
+            let allFilled = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    allFilled = false;
+                }
+            });
+            return allFilled;
+        }
+
+        // Event listener for input fields
+        document.querySelectorAll('#experimentForm1 input[required]').forEach(input => {
+            input.addEventListener('change', function() {
+                const allFilled = checkInputs();
+                document.getElementById('submitButton').disabled = !allFilled;
+            });
+        });
+
+        // Event listener for select fields
+        document.querySelectorAll('#experimentForm1 select[required]').forEach(select => {
+            select.addEventListener('change', function() {
+                const allFilled = checkInputs();
+                document.getElementById('submitButton').disabled = !allFilled;
+            });
+        });
+
+        document.getElementById('experiment').addEventListener('change', function () {
+    var experimentSelect = document.getElementById('experiment');
+    var selectedExperiment = experimentSelect.options[experimentSelect.selectedIndex].value;
+    if (selectedExperiment === 'Existing Experiment') {
+        var commoditySelect = document.getElementById('commodity');
+        var selectedCommodity = commoditySelect.options[commoditySelect.selectedIndex].value;
+
+        // Create a FormData object and append the selected commodity
+        var formData = new FormData();
+        formData.append('commodity', selectedCommodity);
+
+        // Make a fetch request to the Flask endpoint
+        fetch('/experiment_names', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            // Handle the received experiment names data
+            var existingExperimentSelect = document.getElementById('existing_experiment_name');
+            existingExperimentSelect.innerHTML = ''; // Clear existing options
+            data.forEach(function (experiment) {
+                var option = document.createElement('option');
+                option.value = experiment;
+                option.text = experiment;
+                existingExperimentSelect.appendChild(option);
+            });
+            document.getElementById('existing_experiment').style.display = 'block';
+            document.getElementById('new_experiment').style.display = 'none';
+            
+        })
+        .catch(error => console.error('Error:', error));
+        
+    } else {
+        document.getElementById('existing_experiment').style.display = 'none';
+        document.getElementById('new_experiment').style.display = 'block';
+        
+    }
+});
+
+
+document.getElementById('commodity').addEventListener('change', function () {
+    var experimentSelect = document.getElementById('experiment');
+    var selectedExperiment = experimentSelect.options[experimentSelect.selectedIndex].value;
+    if (selectedExperiment === 'Existing Experiment') {
+        var commoditySelect = document.getElementById('commodity');
+        var selectedCommodity = commoditySelect.options[commoditySelect.selectedIndex].value;
+
+        // Create a FormData object and append the selected commodity
+        var formData = new FormData();
+        formData.append('commodity', selectedCommodity);
+
+        // Make a fetch request to the Flask endpoint
+        fetch('/experiment_names', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            // Handle the received experiment names data
+            var existingExperimentSelect = document.getElementById('existing_experiment_name');
+            existingExperimentSelect.innerHTML = ''; // Clear existing options
+            data.forEach(function (experiment) {
+                var option = document.createElement('option');
+                option.value = experiment;
+                option.text = experiment;
+                existingExperimentSelect.appendChild(option);
+            });
+            document.getElementById('existing_experiment').style.display = 'block';
+            document.getElementById('new_experiment').style.display = 'none';
+            
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        document.getElementById('existing_experiment').style.display = 'none';
+        document.getElementById('new_experiment').style.display = 'block';
+    }
+});
+
+        // // Event listener for 'Experiment' select field
+        // document.getElementById('experiment').addEventListener('change', function() {
+        //     if (this.value === 'Existing Experiment') {
+        //         var commoditySelect = document.getElementById('commodity');
+        //         var selectedCommodity = commoditySelect.options[commoditySelect.selectedIndex].value;
+
+        //         // Make an AJAX request to fetch the experiment names based on the selected commodity
+        //         var xhr = new XMLHttpRequest();
+        //         xhr.open('GET', '/experiment_names?commodity=' + selectedCommodity, true);
+        //         xhr.onreadystatechange = function() {
+        //             if (xhr.readyState == 4 && xhr.status == 200) {
+        //                 var experimentNames = JSON.parse(xhr.responseText);
+        //                 var existingExperimentSelect = document.getElementById('existing_experiment_name');
+        //                 existingExperimentSelect.innerHTML = ''; // Clear existing options
+        //                 experimentNames.forEach(function (item) {
+        //                     item.experiment_name.forEach(function (experiment) {
+        //                         var option = document.createElement('option');
+        //                         option.value = experiment;
+        //                         option.text = experiment;
+        //                         existingExperimentSelect.appendChild(option);
+        //                     });
+        //                 });
+        //                 document.getElementById('existing_experiment').style.display = 'block';
+        //                 document.getElementById('new_experiment').style.display = 'none';
+        //             }
+        //         };
+        //         xhr.send();
+        //     } else {
+        //         document.getElementById('existing_experiment').style.display = 'none';
+        //         document.getElementById('new_experiment').style.display = 'block';
+        //     }
+
+        //     // Check inputs when 'Experiment' select field changes
+        //     const allFilled = checkInputs();
+        //     document.getElementById('submitButton').disabled = !allFilled;
+        // });
+
+        // Initial check of inputs when the page loads
+        window.addEventListener('load', function() {
+            const allFilled = checkInputs();
+            document.getElementById('submitButton').disabled = !allFilled;
+        });
+    </script>
+</body>
+</html>

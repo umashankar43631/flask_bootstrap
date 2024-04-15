@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>
+        ExperimentConfiguration
+    </title>
+    <style>
+        .custom-col-xl-2-5 {
+            width: 20%;
+            padding: 0 5px; /* Adjust padding as needed */
+        }
+        input[type="file"] {
+        border: 1px solid #ccc; /* Border color */
+        border-radius: 4px; /* Border radius */
+        padding: 8px; /* Padding */
+        width: 60%; /* Full width */
+        box-sizing: border-box; /* Include padding and border in width */
+    }
+    </style>
+</head>
+<body>
+    
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- <div class="col-auto col-md-4 col-xl-2 px-sm-3 px-0 bg-info"> -->
+            <div class="col-auto col-md-4 custom-col-xl-2-5 px-sm-3 px-0 bg-danger">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline"></span><br><br>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link align-middle px-0 text-white">
+                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('experimentConfig') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Experiment Config</span> 
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('getTransformations') }}" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Transformations</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('scheduleExperiment') }} " class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Scheduling Experiment</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link px-0 align-middle text-white">
+                                <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Results and Dashboard</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                </div>
+            </div>
+    
+
+
+
+    <div class="col py-3">
+                <br><br>
+                
+                <!-- <label for="myfile"><h4 style="text-decoration:underline;">Data Upload </h4></label> <br><br>
+                <input type="file" id="myfile" placeholder="Browse File" name="myfile" />
+                <div style="text-align: left; display: inline-block;">
+                    <br>
+                    &nbsp;&nbsp;
+                    <input class="btn btn-primary" type="submit" value="Upload">
+                </div>    -->
+                <form id="uploadForm" action="/ExperimentConfiguration/upload" method="post" enctype="multipart/form-data">
+                    <label for="myfile"><h4 style="text-decoration:underline;">Data Upload </h4></label> <br>
+                    <input type="file" id="myfile" placeholder="Browse File" name="myfile" />
+                    <div style="text-align: left; display: inline-block;">
+                        <br>
+                        &nbsp;&nbsp;
+                        <input class="btn btn-primary" type="submit" value="Upload" onclick="uploadFile()">
+                    </div>
+                </form>
+                <br>
+                <div id="uploadMessage" style="display: none;"></div>                
+                <h4 style="text-decoration:underline;">Forecast Setup Configurations</h4><br>
+                <div class="container-fluid">
+                    <div class="row justify-content-center align-items-center min-vh-60">
+                        <div class="col-md-10">
+                            <div class="border p-4">
+                                <form id="experimentForm" action="{{ url_for('experimentSubmit') }}" method="post">
+                                    <label for="granularity">Granularity:</label>
+
+                                    <input type="number" id="granularity" name="granularity">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="horizon">Forecast Horizon:</label>
+
+                                    <input type="number" id="horizon" name="forecasthorizon"> <br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;
+
+                                    <select id="granularity_level" name="granularity_level">
+                                    <option value="Day">Day</option>
+                                    <option value="Week">Week</option>
+                                    <option value="Month">Month</option>
+                                    </select>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;
+                                    
+                                    <br>
+                                        <br>
+                                        <label for="lookahead">Lookahead :</label>
+                                        <input type="number" id="lookahead" name="lookahead">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        
+                                        <label for="lookback">Lookback :&nbsp;</label>
+                                        <input type="number" id="lookback" name="lookback">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;
+                                    
+
+                                        <br>
+                                        <br>
+                                    <div style="text-align: center;">
+                                    <input id="submitButton" class="btn btn-primary" type="submit" value="Save and Next">
+                                    </div>    
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+    // Function to check if all required inputs are filled
+    function checkInputs() {
+        const inputs = document.querySelectorAll('#experimentForm input[required]');
+        let allFilled = true;
+        inputs.forEach(input => {
+            if (!input.value) {
+                allFilled = false;
+            }
+        });
+        return allFilled;
+    }
+
+    // Event listener for input fields
+    document.querySelectorAll('#experimentForm input[required]').forEach(input => {
+        input.addEventListener('input', function() {
+            const allFilled = checkInputs();
+            document.getElementById('submitButton').disabled = !allFilled;
+        });
+    });
+
+    function uploadFile() {
+        var formData = new FormData();
+        formData.append('myfile', document.getElementById('myfile').files[0]);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ExperimentConfiguration/upload', true);
+        xhr.send(formData);
+        document.getElementById('uploadMessage').innerText = 'File uploaded successfully';
+        document.getElementById('uploadMessage').style.display = 'block';
+            setTimeout(function() {
+                document.getElementById('uploadMessage').style.display = 'none';
+        }, 5000);
+    }
+</script>
+
+</body>
+
+</html>
